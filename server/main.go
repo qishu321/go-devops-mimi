@@ -1,88 +1,88 @@
 package main
 
 import (
-	"log"
+	"context"
+	"fmt"
+	"go-devops-mimi/server/config"
 	"net/http"
-	"sync"
+	"os"
+	"os/signal"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"go-devops-mimi/server/middleware"
+	"go-devops-mimi/server/public/common"
+	"go-devops-mimi/server/routes"
+	"go-devops-mimi/server/service"
 )
-
-// AgentInfo 用于接收 agent 注册信息
-type AgentInfo struct {
-	AgentID   string `json:"agent_id"`
-	Host      string `json:"host"`
-	Timestamp int64  `json:"timestamp"`
-}
-
-// Command 命令结构
-type Command struct {
-	Command   string `json:"command"`
-	Timestamp int64  `json:"timestamp"`
-}
-
-// 全局 map 存储每个 Agent 的命令队列（用 slice 模拟队列）
-var (
-	agentCommands = make(map[string][]Command)
-	agentMutex    sync.RWMutex
-)
-
-func registerAgent(c *gin.Context) {
-	var info AgentInfo
-	if err := c.ShouldBindJSON(&info); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	info.Timestamp = time.Now().Unix()
-	// 注册后初始化该 agent 的命令队列为空
-	agentMutex.Lock()
-	agentCommands[info.AgentID] = []Command{}
-	agentMutex.Unlock()
-	log.Printf("Agent %s 注册成功，Host=%s", info.AgentID, info.Host)
-	c.JSON(http.StatusOK, gin.H{"status": "registered", "agent_id": info.AgentID})
-}
-
-func getCommands(c *gin.Context) {
-	agentID := c.Param("agentid")
-	agentMutex.Lock()
-	commands, exists := agentCommands[agentID]
-	if !exists {
-		commands = []Command{}
-	}
-	// 下发后清空队列
-	agentCommands[agentID] = []Command{}
-	agentMutex.Unlock()
-	c.JSON(http.StatusOK, commands)
-}
-
-func addCommand(c *gin.Context) {
-	agentID := c.Param("agentid")
-	var cmd Command
-	if err := c.ShouldBindJSON(&cmd); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	cmd.Timestamp = time.Now().Unix()
-	agentMutex.Lock()
-	agentCommands[agentID] = append(agentCommands[agentID], cmd)
-	agentMutex.Unlock()
-	log.Printf("下发命令给 Agent %s: %s", agentID, cmd.Command)
-	c.JSON(http.StatusOK, gin.H{"status": "command added"})
-}
 
 func main() {
-	router := gin.Default()
 
-	// Agent 注册接口
-	router.POST("/agents/register", registerAgent)
-	// Agent 轮询获取命令
-	router.GET("/agents/:agentid/commands", getCommands)
-	// 外部下发命令接口（例如运维人员通过这个接口下发命令）
-	router.POST("/agents/:agentid/command", addCommand)
+	// 加载配置文件到全局配置结构体
+	config.InitConfig()
 
-	log.Println("Server 正在监听 :8080")
-	if err := router.Run(":8080"); err != nil {
-		log.Fatalf("Gin 启动失败: %v", err)
+	// 初始化日志
+	common.InitLogger()
+
+	// 初始化数据库(mysql)
+	common.InitDB()
+
+	// 初始化casbin策略管理器
+	common.InitCasbinEnforcer()
+
+	// 初始化Validator数据校验
+	common.InitValidate()
+
+	// 初始化mysql数据
+	common.InitData()
+	// 初始化定时任务数据
+	// common.InitCronJobs()
+
+	// 操作日志中间件处理日志时没有将日志发送到rabbitmq或者kafka中, 而是发送到了channel中
+	// 这里开启3个goroutine处理channel将日志记录到数据库
+	for i := 0; i < 3; i++ {
+		go service.ServiceGroupApp.SystemServiceGroup.OperationLogService.SaveOperationLogChannel(middleware.OperationLogChan)
 	}
+
+	// 注册所有路由
+	r := routes.InitRoutes()
+
+	host := "0.0.0.0"
+	port := config.Conf.System.Port
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", host, port),
+		Handler: r,
+	}
+
+	// Initializing the server in a goroutine so that
+	// it won't block the graceful shutdown handling below
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			common.Log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	common.Log.Info(fmt.Sprintf("Server is running at %s:%d/%s", host, port, config.Conf.System.UrlPathPrefix))
+
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 5 seconds.
+	quit := make(chan os.Signal, 1)
+	// kill (no param) default send syscall.SIGTERM
+	// kill -2 is syscall.SIGINT
+	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
+	// signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	common.Log.Info("Shutting down server...")
+
+	// The context is used to inform the server it has 5 seconds to finish
+	// the request it is currently handling
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		common.Log.Fatal("Server forced to shutdown:", err)
+	}
+
+	common.Log.Info("Server exiting!")
+
 }

@@ -1,0 +1,2 @@
+2025-03-31 17:59:23	FATAL	server/main.go:59	main.main.func1	listen: listen tcp 0.0.0.0:8888: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+

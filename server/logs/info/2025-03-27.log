@@ -1,0 +1,35 @@
+2025-03-27 15:21:44	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-03-27 15:22:23	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-03-27 15:22:24	INFO	common/database.go:92	go-devops-mimi/server/public/common.ConnMysql	初始化mysql数据库完成! dsn: root:******@tcp(192.168.2.112:3310)/devops-mimi?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms
+2025-03-27 15:23:40	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-03-27 15:23:40	INFO	common/database.go:92	go-devops-mimi/server/public/common.ConnMysql	初始化mysql数据库完成! dsn: root:******@tcp(192.168.2.112:3310)/devops-mimi?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms
+2025-03-27 15:26:14	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-03-27 15:26:14	INFO	common/database.go:92	go-devops-mimi/server/public/common.ConnMysql	初始化mysql数据库完成! dsn: root:******@tcp(192.168.2.112:3310)/devops-mimi?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms
+2025-03-27 15:26:14	INFO	common/casbin.go:24	go-devops-mimi/server/public/common.InitCasbinEnforcer	初始化Casbin完成!
+2025-03-27 15:26:14	INFO	common/validator.go:27	go-devops-mimi/server/public/common.InitValidate	初始化validator.v10数据校验器完成
+2025-03-27 15:26:14	INFO	routes/a_enter.go:73	go-devops-mimi/server/routes.InitRoutes	初始化路由完成！
+2025-03-27 15:26:14	INFO	server/main.go:63	main.main	Server is running at 0.0.0.0:8888/api
+2025-03-27 15:40:27	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-03-27 15:40:27	INFO	common/database.go:92	go-devops-mimi/server/public/common.ConnMysql	初始化mysql数据库完成! dsn: root:******@tcp(192.168.2.112:3310)/devops-mimi?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms
+2025-03-27 15:40:27	INFO	common/casbin.go:24	go-devops-mimi/server/public/common.InitCasbinEnforcer	初始化Casbin完成!
+2025-03-27 15:40:27	INFO	common/validator.go:27	go-devops-mimi/server/public/common.InitValidate	初始化validator.v10数据校验器完成
+2025-03-27 15:40:27	INFO	routes/a_enter.go:73	go-devops-mimi/server/routes.InitRoutes	初始化路由完成！
+2025-03-27 15:40:27	INFO	server/main.go:63	main.main	Server is running at 0.0.0.0:8888/api
+2025-03-27 16:10:02	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-03-27 16:10:02	INFO	common/database.go:92	go-devops-mimi/server/public/common.ConnMysql	初始化mysql数据库完成! dsn: root:******@tcp(192.168.2.112:3310)/devops-mimi?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms
+2025-03-27 16:10:02	INFO	common/casbin.go:24	go-devops-mimi/server/public/common.InitCasbinEnforcer	初始化Casbin完成!
+2025-03-27 16:10:02	INFO	common/validator.go:27	go-devops-mimi/server/public/common.InitValidate	初始化validator.v10数据校验器完成
+2025-03-27 16:10:02	INFO	routes/a_enter.go:73	go-devops-mimi/server/routes.InitRoutes	初始化路由完成！
+2025-03-27 16:10:02	INFO	server/main.go:63	main.main	Server is running at 0.0.0.0:8888/api
+2025-03-27 16:19:26	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-03-27 16:19:26	INFO	common/database.go:92	go-devops-mimi/server/public/common.ConnMysql	初始化mysql数据库完成! dsn: root:******@tcp(192.168.2.112:3310)/devops-mimi?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms
+2025-03-27 16:19:27	INFO	common/casbin.go:24	go-devops-mimi/server/public/common.InitCasbinEnforcer	初始化Casbin完成!
+2025-03-27 16:19:27	INFO	common/validator.go:27	go-devops-mimi/server/public/common.InitValidate	初始化validator.v10数据校验器完成
+2025-03-27 16:19:27	INFO	routes/a_enter.go:73	go-devops-mimi/server/routes.InitRoutes	初始化路由完成！
+2025-03-27 16:19:27	INFO	server/main.go:63	main.main	Server is running at 0.0.0.0:8888/api
+2025-03-27 16:22:34	DEBUG	middleware/AuthMiddleware.go:113	go-devops-mimi/server/middleware.unauthorized	JWT认证失败, 错误码: 401, 错误信息: 无法解密, 私钥可能不正确,解析私钥失败
+2025-03-27 16:22:43	DEBUG	middleware/AuthMiddleware.go:113	go-devops-mimi/server/middleware.unauthorized	JWT认证失败, 错误码: 401, 错误信息: 无法解密, 私钥可能不正确,解析私钥失败
+2025-03-27 16:22:53	DEBUG	middleware/AuthMiddleware.go:113	go-devops-mimi/server/middleware.unauthorized	JWT认证失败, 错误码: 401, 错误信息: 无法解密, 私钥可能不正确,解析私钥失败
+2025-03-27 16:23:14	DEBUG	middleware/AuthMiddleware.go:113	go-devops-mimi/server/middleware.unauthorized	JWT认证失败, 错误码: 401, 错误信息: 无法解密, 私钥可能不正确,解析私钥失败
+2025-03-27 16:25:24	DEBUG	middleware/AuthMiddleware.go:113	go-devops-mimi/server/middleware.unauthorized	JWT认证失败, 错误码: 401, 错误信息: 无法解密, 私钥可能不正确,解析私钥失败
+2025-03-27 16:25:39	DEBUG	middleware/AuthMiddleware.go:113	go-devops-mimi/server/middleware.unauthorized	JWT认证失败, 错误码: 401, 错误信息: 无法解密, 私钥可能不正确,解析私钥失败
