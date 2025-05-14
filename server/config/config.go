@@ -91,6 +91,7 @@ type SystemConfig struct {
 	RSAPublicBytes  []byte `mapstructure:"-" json:"-"`
 	RSAPrivateBytes []byte `mapstructure:"-" json:"-"`
 	UploadPath      string `mapstructure:"upload-path" json:"uploadPath"`
+	TimeZone        string `mapstructure:"time-zone" json:"timeZone"`
 }
 
 type LogsConfig struct {

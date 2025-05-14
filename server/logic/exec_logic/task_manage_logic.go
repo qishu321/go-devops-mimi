@@ -13,10 +13,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type TaskManageLogic struct {
+type ManageLogic struct {
 }
 
-func (l TaskManageLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ManageLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
 	r, ok := req.(*execReq.TaskManageAddReq)
 	if !ok {
 		return nil, tools.ReqAssertErr
@@ -57,7 +57,7 @@ func (l TaskManageLogic) Add(c *gin.Context, req interface{}) (data interface{},
 	return nil, nil
 }
 
-func (l TaskManageLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ManageLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
 	r, ok := req.(*execReq.TaskManageUpdateReq)
 	if !ok {
 		return nil, tools.ReqAssertErr
@@ -98,7 +98,7 @@ func (l TaskManageLogic) Update(c *gin.Context, req interface{}) (data interface
 	return nil, nil
 }
 
-func (l TaskManageLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ManageLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
 	r, ok := req.(*execReq.TaskManageListReq)
 	if !ok {
 		return nil, tools.ReqAssertErr
@@ -127,7 +127,7 @@ func (l TaskManageLogic) List(c *gin.Context, req interface{}) (data interface{}
 }
 
 // Delete 删除数据
-func (l TaskManageLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ManageLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
 	r, ok := req.(*execReq.TaskManageDeleteReq)
 	if !ok {
 		return nil, tools.ReqAssertErr
@@ -142,7 +142,7 @@ func (l TaskManageLogic) Delete(c *gin.Context, req interface{}) (data interface
 }
 
 // / Info 查看数据详情
-func (s TaskManageLogic) Info(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (s ManageLogic) Info(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
 	r, ok := req.(*execReq.TaskManageInfoReq)
 	if !ok {
 		return nil, tools.ReqAssertErr

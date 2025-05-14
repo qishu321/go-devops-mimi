@@ -141,15 +141,34 @@ func (m *TaskManage) TableName() string {
 	return "t_task_manage"
 }
 
-// TaskManageLog 任务组执行记录
-type TaskManageLog struct {
+// ManageLog 任务组执行记录
+type ManageLog struct {
 	gorm.Model
 	// 任务组执行名称
 	Name string `gorm:"column:name;size:128;not null;comment:'任务组执行名称'" json:"name"`
 	// 执行时传入的参数或全局变量，建议以JSON格式存储
 	Args string `gorm:"column:args;type:text;comment:'执行时传入的参数或全局变量，建议为JSON格式'" json:"args"`
 	// 任务组描述或备注信息
-	Description string `gorm:"column:description;size:512;comment:'任务组描述或备注信息'" json:"description"`
+	Desc string `gorm:"column:desc;size:512;comment:'任务组描述或备注信息'" json:"desc"`
+	// 关联的子任务日志，通过多对多关系关联到 TaskLog
+	TaskManageLogs []*TaskManageLog `gorm:"many2many:t_task_manage_log_s;comment:'关联的子任务日志'" json:"t_task_manage_log_s"`
+	// 任务状态，如 pending、running、success、failed
+	Status string `gorm:"column:status;size:32;default:'draft';comment:'任务状态（pending、running、success、failed）'" json:"status"`
+	// 发起执行时间
+	StartTime string `gorm:"type:varchar(2048);comment:'发起时间'" json:"startTime"`
+	EndTime   string `gorm:"type:varchar(2048);comment:'执行结束时间'" json:"endTime"`
+	TimeCost  int64  `gorm:"column:time_cost;type:int(6);comment:'执行耗时（毫秒）'" json:"timeCost"` // 执行耗时，单位毫秒
+}
+
+func (m *ManageLog) TableName() string {
+	return "t_manage_log"
+}
+
+// / ManageLog 子任务执行记录
+type TaskManageLog struct {
+	gorm.Model
+	// 子任务名称
+	Name string `gorm:"column:name;size:128;not null;comment:'任务组执行名称'" json:"name"`
 	// 关联的子任务日志，通过多对多关系关联到 TaskLog
 	Tasklogs []*TaskLog `gorm:"many2many:t_task_log_s;comment:'关联的子任务日志'" json:"t_task_log_s"`
 	// 任务状态，如 pending、running、success、failed
@@ -195,16 +214,46 @@ func (m *TaskLog) TableName() string {
 // Cron 定时任务
 type Cron struct {
 	gorm.Model
-	// 定时表达式，如标准 Cron 表达式
-	Expression string `gorm:"size:128;not null" json:"expression"`
 	// 定时任务名称或描述
-	Name        string `gorm:"size:128;not null" json:"name"`
-	Description string `gorm:"size:512" json:"description"`
+	Name       string     `gorm:"size:128;unique;not null" json:"name"` // 任务名
+	Desc       string     `gorm:"size:512" json:"desc"`                 // 描述
+	CronType   string     `gorm:"size:32;" json:"cronType"`             // 类型：interval/once/cron
+	Cronession string     `gorm:"size:128" json:"cronession"`           // Cron 表达式或时间片
+	Interval   int        `gorm:"type:int;default:0;comment:'间隔秒数'" json:"interval"`
+	OnceTime   *time.Time `gorm:"column:once_at;comment:'一次性任务执行时间'" json:"onceTime"`
+	NodesIDs   string     `gorm:"column:node_ids;comment:'执行主机ID列表'" json:"node_ids"`
+	CmdType    string     `gorm:"column:cmd_type;size:32;comment:'类型，如脚本执行日志或命令执行日志'" json:"cmd_type"` // 日志类型
+	Type       string     `gorm:"column:type;size:32;comment:'脚本类型，如 shell、python 等'" json:"type"`     // 脚本类型
+	Content    string     `gorm:"column:content;type:text;comment:'脚本内容'" json:"content"`              // 脚本内容
+	Timeout    int        `gorm:"column:timeout;comment:'脚本超时时间（秒）'" json:"timeout"`
+	Enable     int8       `gorm:"type:tinyint(1);default:0;column:enable;comment:'是否可用 1：是 0： 否'" json:"enable"`
+	//创建人
+	Creator string `gorm:"column:creator;type:varchar(20);comment:'创建人'" json:"creator"`
+}
+
+func (m *Cron) TableName() string {
+	return "t_cron"
+}
+
+// Cron 定时任务
+type CronLog struct {
+	gorm.Model
+	// 定时任务名称或描述
+	Name       string       `gorm:"size:128;not null" json:"name"`
+	Desc       string       `gorm:"size:512" json:"desc"`
+	CronType   string       `gorm:"size:32;" json:"cronType"`   // 类型：interval/once/cron
+	Cronession string       `gorm:"size:128" json:"cronession"` // Cron 表达式或时间片
+	Interval   int          `gorm:"type:int;default:0;comment:'间隔秒数'" json:"interval"`
+	OnceTime   *time.Time   `gorm:"column:once_at;comment:'一次性任务执行时间'" json:"onceTime"`
+	ScriptLogs []*ScriptLog `gorm:"many2many:t_cron_script_log_s;comment:'关联的脚本执行记录'" json:"t_cron_script_log_s"`
+	NodesIDs   string       `gorm:"column:node_ids;comment:'执行主机ID列表'" json:"node_ids"`
 	// 状态：active、paused、disabled等
-	Status string `gorm:"size:32;default:'active'" json:"status"`
-	// 下一次执行时间（可选）
-	NextRunAt *time.Time `json:"next_run_at"`
-	SendTime  *time.Time `gorm:"column:send_at;type:timestamp;default:NULL;comment:'执行发起时间'" json:"sendTime"` // 发起时间
-	EndTime   *time.Time `gorm:"column:end_at;type:timestamp;default:NULL;comment:'执行结束时间'" json:"endTime"`   // 结束时间
-	TimeCost  int64      `gorm:"column:time_cost;type:int(6);comment:'执行耗时（毫秒）'" json:"timeCost"`             // 执行耗时，单位毫秒
+	Status    int8   `gorm:"column:status;comment:'1:成功,2：失败'" json:"status"`
+	StartTime string `gorm:"type:varchar(2048);comment:'发起时间'" json:"startTime"`
+	EndTime   string `gorm:"type:varchar(2048);comment:'执行结束时间'" json:"endTime"`
+	TimeCost  int64  `gorm:"column:time_cost;type:int(6);comment:'执行耗时（毫秒）'" json:"timeCost"` // 执行耗时，单位毫秒
+}
+
+func (m *CronLog) TableName() string {
+	return "t_cron_log"
 }

@@ -6,4 +6,8 @@ type ServiceGroup struct {
 	ScriptLibraryService
 	TransferService
 	TaskManageService
+	ManageLogService
+	TaskLogService
+	CronService
+	CronLogService
 }

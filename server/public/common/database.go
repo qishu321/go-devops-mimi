@@ -47,6 +47,11 @@ func dbAutoMigrate() {
 		&exec.Transfer{},
 		&exec.Task{},
 		&exec.TaskManage{},
+		&exec.TaskLog{},
+		&exec.TaskManageLog{},
+		&exec.ManageLog{},
+		&exec.Cron{},
+		&exec.CronLog{},
 	)
 }
 

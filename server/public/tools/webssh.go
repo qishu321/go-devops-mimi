@@ -3,20 +3,21 @@ package tools
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
-	"sync"
 
 	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/ssh"
 )
 
+// NewSSHClient 与之前相同...
 func NewSSHClient(conf *SSHClientConfig) (*ssh.Client, error) {
 	config := &ssh.ClientConfig{
 		Timeout:         conf.Timeout,
 		User:            conf.UserName,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //忽略know_hosts检查
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	switch conf.AuthModel {
 	case "password":
@@ -28,71 +29,75 @@ func NewSSHClient(conf *SSHClientConfig) (*ssh.Client, error) {
 		}
 		config.Auth = []ssh.AuthMethod{ssh.PublicKeys(signer)}
 	}
-	c, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", conf.PublicIP, conf.Port), config)
-	if err != nil {
-		return nil, err
-	}
-	return c, nil
+	return ssh.Dial("tcp", fmt.Sprintf("%s:%d", conf.PublicIP, conf.Port), config)
 }
 
+// Turn 封装了 SSH 会话和 WS 写队列
 type Turn struct {
+	TaskName  string // 新增：哪个子任务组
+	NodeName  string // 新增：哪个节点
 	StdinPipe io.WriteCloser
 	Session   *ssh.Session
-	WsConn    *websocket.Conn
-	writeMu   sync.Mutex
+	WsConn    *websocket.Conn // 仅用于读取客户端输入
+	writer    *WSWriter       // 后台唯一写者
+	LogWriter io.Writer       // 可选，把所有输出也写到这里
+
 }
 
-func NewTurn(wsConn *websocket.Conn, sshClient *ssh.Client) (*Turn, error) {
+// NewTurn 接收 WSWriter，并启动交互式 Shell
+func NewTurn(wsConn *websocket.Conn, sshClient *ssh.Client, writer *WSWriter, nodeName string) (*Turn, error) {
 	sess, err := sshClient.NewSession()
 	if err != nil {
 		return nil, err
 	}
-
 	stdinPipe, err := sess.StdinPipe()
 	if err != nil {
 		return nil, err
 	}
-
-	turn := &Turn{StdinPipe: stdinPipe, Session: sess, WsConn: wsConn}
+	turn := &Turn{
+		NodeName:  nodeName, // 新增：哪个节点
+		StdinPipe: stdinPipe,
+		Session:   sess,
+		WsConn:    wsConn,
+		writer:    writer,
+	}
+	// 将 stdout 和 stderr 都定向到 Turn.Write
 	sess.Stdout = turn
 	sess.Stderr = turn
-
-	modes := ssh.TerminalModes{
-		ssh.ECHO:          1,     // disable echo
-		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
-		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
-	}
-	if err := sess.RequestPty("xterm", 150, 30, modes); err != nil {
+	// 请求 PTY 并启动 Shell
+	modes := ssh.TerminalModes{ssh.ECHO: 0, ssh.TTY_OP_ISPEED: 14400, ssh.TTY_OP_OSPEED: 14400}
+	if err := sess.RequestPty("dumb", 150, 30, modes); err != nil {
 		return nil, err
 	}
 	if err := sess.Shell(); err != nil {
 		return nil, err
 	}
-
 	return turn, nil
 }
+
+// Write 实现 io.Writer，将输出投递给后台唯一写者
 func (t *Turn) Write(p []byte) (n int, err error) {
-	t.writeMu.Lock()
-	writer, err := t.WsConn.NextWriter(websocket.TextMessage)
-	if err != nil {
-		t.writeMu.Unlock()
-		return 0, err
+	msg := struct {
+		Node string `json:"node"`
+		Data string `json:"data"`
+	}{
+		Node: t.NodeName,
+		Data: string(p),
 	}
-	defer func() {
-		writer.Close()
-		t.writeMu.Unlock() // 写完毕后解锁
-	}()
-	fmt.Println("Write:" + string(p))
-	return writer.Write(p)
-}
-func (t *Turn) Close() error {
-	fmt.Println("Close()")
-	if t.Session != nil {
-		t.Session.Close()
+	b, _ := json.Marshal(msg)
+	t.writer.Send(b)
+	// 2) 如果绑定了 LogWriter，就一并写入
+	if t.LogWriter != nil {
+		if _, err := t.LogWriter.Write(p); err != nil {
+			// 写缓冲失败也不影响前端输出，所以只记个 log 就好
+			fmt.Printf("[Turn %s@%s] 写 LogWriter 失败: %v\n", t.TaskName, t.NodeName, err)
+		}
 	}
 
-	return t.WsConn.Close()
+	return len(p), nil
 }
+
+// Read 从 WebSocket 读取客户端输入
 func (t *Turn) Read(p []byte) (n int, err error) {
 	for {
 		msgType, reader, err := t.WsConn.NextReader()
@@ -102,71 +107,36 @@ func (t *Turn) Read(p []byte) (n int, err error) {
 		if msgType != websocket.TextMessage {
 			continue
 		}
-		fmt.Println("Write:" + string(p))
 		return reader.Read(p)
 	}
 }
-func (t *Turn) LoopRead(context context.Context) error {
+
+// LoopRead 持续将前端输入写入远端 Shell stdin
+func (t *Turn) LoopRead(ctx context.Context) error {
 	for {
 		select {
-		case <-context.Done():
+		case <-ctx.Done():
 			return errors.New("LoopRead exit")
 		default:
 			_, wsData, err := t.WsConn.ReadMessage()
-			fmt.Println("本地输入：" + string(wsData))
 			if err != nil {
 				return fmt.Errorf("reading webSocket message err:%s", err)
 			}
-			body := decode(wsData[1:])
-			fmt.Println("body:" + string(body))
-			body = wsData
-			fmt.Println("body:" + string(body))
+			// 解码、写入 stdin（可根据实际需要调整解码逻辑）
+			body, _ := base64.StdEncoding.DecodeString(string(wsData[1:]))
 			if _, err := t.StdinPipe.Write(body); err != nil {
 				return fmt.Errorf("StdinPipe write err:%s", err)
 			}
-
 		}
 	}
 }
 
+// SessionWait 等待远端 Shell 结束
 func (t *Turn) SessionWait() error {
-	if err := t.Session.Wait(); err != nil {
-		return err
-	}
-	return nil
+	return t.Session.Wait()
 }
 
-func decode(p []byte) []byte {
-	decodeString, _ := base64.StdEncoding.DecodeString(string(p))
-	return decodeString
-}
-
-type WSWriter struct {
-	ch   chan []byte
-	ws   *websocket.Conn
-	done chan struct{}
-}
-
-func NewWSWriter(ws *websocket.Conn) *WSWriter {
-	w := &WSWriter{ws: ws, ch: make(chan []byte, 100), done: make(chan struct{})}
-	go func() {
-		for {
-			select {
-			case msg := <-w.ch:
-				w.ws.WriteMessage(websocket.TextMessage, msg)
-			case <-w.done:
-				return
-			}
-		}
-	}()
-	return w
-}
-
-func (w *WSWriter) Send(msg []byte) {
-	w.ch <- msg
-}
-
-func (w *WSWriter) Close() {
-	close(w.done)
-	w.ws.Close()
+// Close 只关闭 SSH 会话，WSWriter 在外部统一 Close
+func (t *Turn) Close() error {
+	return t.Session.Close()
 }

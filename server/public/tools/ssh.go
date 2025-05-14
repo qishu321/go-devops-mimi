@@ -71,6 +71,7 @@ func CreateFileOnRemoteServer(sshConfig *SSHClientConfig, filename, typename, co
 
 	// Execute the combined script as a single SSH command
 	command := fmt.Sprintf("%s && %s %s", scriptContent, typename, absoluteFilePath)
+	fmt.Println("SSH command Error:", command)
 
 	output, err := SshCommand(sshConfig, command)
 	if err != nil {

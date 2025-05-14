@@ -24,7 +24,7 @@ type Pool struct {
 // NewPool 创建一个协程池，
 // minWorkers: 最小长期运行的 worker 数量 (>=0)
 // maxWorkers: 最大 worker 数量 (>= minWorkers)
-// queueSize: 任务队列大小 (>=0)
+// // queueSize: 任务队列缓冲大小（队列满后才会扩容协程）
 // workerIdleTimeout: worker 空闲多久后退出（如果当前 worker 数量超过 minWorkers）
 func NewPool(minWorkers, maxWorkers, queueSize int, workerIdleTimeout time.Duration) *Pool {
 	if minWorkers < 0 || maxWorkers < minWorkers || queueSize < 0 {

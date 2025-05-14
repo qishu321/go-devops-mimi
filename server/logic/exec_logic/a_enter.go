@@ -8,7 +8,9 @@ type LogicGroup struct {
 	ScriptLogic
 	ScriptLibraryLogic
 	TransferLogic
-	TaskManageLogic
+	ManageLogic
+	CronLogic
+	CronLogLogic
 }
 
 // 初始化 service
@@ -20,4 +22,8 @@ var (
 	userService          = service.ServiceGroupApp.SystemServiceGroup.UserService
 	nodeService          = service.ServiceGroupApp.CmdbServiceGroup.Node_svc
 	TaskManageService    = service.ServiceGroupApp.ExecServiceGroup.TaskManageService
+	ManageLogService     = service.ServiceGroupApp.ExecServiceGroup.ManageLogService
+	TaskLogService       = service.ServiceGroupApp.ExecServiceGroup.TaskLogService
+	CronService          = service.ServiceGroupApp.ExecServiceGroup.CronService
+	CronLogService       = service.ServiceGroupApp.ExecServiceGroup.CronLogService
 )

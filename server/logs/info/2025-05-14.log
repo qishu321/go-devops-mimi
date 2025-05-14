@@ -1,0 +1,6 @@
+2025-05-14 11:09:22	INFO	common/logger.go:110	go-devops-mimi/server/public/common.InitLogger	初始化zap日志完成!
+2025-05-14 11:09:22	INFO	common/database.go:110	go-devops-mimi/server/public/common.ConnMysql	初始化mysql数据库完成! dsn: root:******@tcp(192.168.2.112:3310)/devops-mimi?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms
+2025-05-14 11:09:23	INFO	common/casbin.go:24	go-devops-mimi/server/public/common.InitCasbinEnforcer	初始化Casbin完成!
+2025-05-14 11:09:23	INFO	common/validator.go:27	go-devops-mimi/server/public/common.InitValidate	初始化validator.v10数据校验器完成
+2025-05-14 11:09:23	INFO	routes/a_enter.go:87	go-devops-mimi/server/routes.InitRoutes	初始化路由完成！
+2025-05-14 11:09:23	INFO	server/main.go:66	main.main	Server is running at 0.0.0.0:8888/api

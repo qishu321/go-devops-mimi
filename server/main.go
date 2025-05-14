@@ -11,6 +11,7 @@ import (
 
 	"go-devops-mimi/server/middleware"
 	"go-devops-mimi/server/public/common"
+	"go-devops-mimi/server/public/common/cronjob"
 	"go-devops-mimi/server/routes"
 	"go-devops-mimi/server/service"
 )
@@ -35,7 +36,7 @@ func main() {
 	// 初始化mysql数据
 	common.InitData()
 	// 初始化定时任务数据
-	// common.InitCronJobs()
+	cronjob.InitCronJobs()
 
 	// 操作日志中间件处理日志时没有将日志发送到rabbitmq或者kafka中, 而是发送到了channel中
 	// 这里开启3个goroutine处理channel将日志记录到数据库

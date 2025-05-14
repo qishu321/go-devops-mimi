@@ -25,8 +25,13 @@ func (s TaskManageRouter) InitTaskManageRoutes(r *gin.RouterGroup, authMiddlewar
 
 	}
 	run := r.Group("/run_task_manage")
+
 	{
 		run.GET("/run", TaskManageController.Run)
+		run.GET("/run_info", TaskManageController.InfoRun)
+		run.GET("/run_list", TaskManageController.ListRun)
+		run.GET("/run_info_webSocket", TaskManageController.RunInfoWebSocket)
+		run.POST("add_run", TaskManageController.AddRun)
 	}
 	return r
 }

@@ -7,6 +7,7 @@ type RouterGroup struct {
 	ScriptLibraryRouter
 	TransferRouter
 	TaskManageRouter
+	CronRouter
 }
 
 // 初始化 cmdb Controller
@@ -15,4 +16,6 @@ var (
 	ScriptLibraryController = controller.ControllerGroupApp.ExecControllerGroup.ScriptlibraryController
 	TransferController      = controller.ControllerGroupApp.ExecControllerGroup.TransferController
 	TaskManageController    = controller.ControllerGroupApp.ExecControllerGroup.TaskManageController
+	CronController          = controller.ControllerGroupApp.ExecControllerGroup.CronController
+	CrondLogController      = controller.ControllerGroupApp.ExecControllerGroup.CronLogController
 )

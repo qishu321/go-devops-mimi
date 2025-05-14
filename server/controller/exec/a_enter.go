@@ -7,11 +7,15 @@ type ControllerGroup struct {
 	ScriptlibraryController
 	TransferController
 	TaskManageController
+	CronController
+	CronLogController
 }
 
 var (
 	ScriptLogic        = logic.LogicGroupApp.ExecLogicGroup.ScriptLogic
 	ScriptLibraryLogic = logic.LogicGroupApp.ExecLogicGroup.ScriptLibraryLogic
 	TransferLogic      = logic.LogicGroupApp.ExecLogicGroup.TransferLogic
-	TaskManageLogic    = logic.LogicGroupApp.ExecLogicGroup.TaskManageLogic
+	ManageLogic        = logic.LogicGroupApp.ExecLogicGroup.ManageLogic
+	CronLogic          = logic.LogicGroupApp.ExecLogicGroup.CronLogic
+	CronLogLogic       = logic.LogicGroupApp.ExecLogicGroup.CronLogLogic
 )

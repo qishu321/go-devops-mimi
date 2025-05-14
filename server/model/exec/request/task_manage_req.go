@@ -7,13 +7,6 @@ type TaskManageListReq struct {
 	PageNum  int    `json:"pageNum" form:"pageNum"`
 	PageSize int    `json:"pageSize" form:"pageSize"`
 }
-type TaskManageRunReq struct {
-	Name  string          `json:"name" validate:"required,min=1,max=64"`
-	Args  json.RawMessage `json:"args"`  // 接收任意结构，作为 JSON 保存
-	Desc  string          ` json:"desc"` // 描述信息
-	Tasks []*TaskReq      `json:"t_task_s"`
-}
-
 type TaskManageAddReq struct {
 	Name  string          `json:"name" validate:"required,min=1,max=64"`
 	Args  json.RawMessage `json:"args"`  // 接收任意结构，作为 JSON 保存
@@ -49,6 +42,19 @@ type TaskManageUpdateReq struct {
 type TaskManageInfoReq struct {
 	ID   uint   `json:"id" form:"id" validate:"required"`
 	Name string `json:"name" form:"name"  validate:"required,min=1,max=64"` // 模板名称
+}
+
+type TaskManageRunReq struct {
+	ID        uint              `json:"id" form:"id" validate:"required"`
+	Name      string            `json:"name" form:"name"  validate:"required,min=1,max=64"` // 模板名称
+	EnvParams map[string]string `form:"env_task_s" json:"env_task_s"`                       // <-- 这里，QueryMap 会填充
+	Desc      string            ` json:"desc"`                                              // 描述信息
+}
+type TaskManageRunInfoReq struct {
+	RunID uint `json:"run_id" form:"run_id" validate:"required"`
+}
+type TaskManageRunInfoWebsocketReq struct {
+	TaskID uint `json:"task_id" form:"task_id" validate:"required"`
 }
 
 type TaskManageDeleteReq struct {

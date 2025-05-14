@@ -13,7 +13,7 @@ type TaskManageController struct{}
 func (m *TaskManageController) Add(c *gin.Context) {
 	req := new(Req.TaskManageAddReq)
 	tools.Run(c, req, func() (interface{}, interface{}) {
-		return TaskManageLogic.Add(c, req)
+		return ManageLogic.Add(c, req)
 	})
 }
 
@@ -21,7 +21,7 @@ func (m *TaskManageController) Add(c *gin.Context) {
 func (m *TaskManageController) Update(c *gin.Context) {
 	req := new(Req.TaskManageUpdateReq)
 	tools.Run(c, req, func() (interface{}, interface{}) {
-		return TaskManageLogic.Update(c, req)
+		return ManageLogic.Update(c, req)
 	})
 }
 
@@ -29,7 +29,7 @@ func (m *TaskManageController) Update(c *gin.Context) {
 func (m *TaskManageController) List(c *gin.Context) {
 	req := new(Req.TaskManageListReq)
 	tools.Run(c, req, func() (interface{}, interface{}) {
-		return TaskManageLogic.List(c, req)
+		return ManageLogic.List(c, req)
 	})
 }
 
@@ -37,12 +37,12 @@ func (m *TaskManageController) List(c *gin.Context) {
 func (m *TaskManageController) Info(c *gin.Context) {
 	req := new(Req.TaskManageInfoReq)
 	tools.Run(c, req, func() (interface{}, interface{}) {
-		return TaskManageLogic.Info(c, req)
+		return ManageLogic.Info(c, req)
 	})
 }
 func (m *TaskManageController) Delete(c *gin.Context) {
 	req := new(Req.TaskManageDeleteReq)
 	tools.Run(c, req, func() (interface{}, interface{}) {
-		return TaskManageLogic.Delete(c, req)
+		return ManageLogic.Delete(c, req)
 	})
 }

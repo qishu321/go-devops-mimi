@@ -83,6 +83,7 @@ func InitRoutes() *gin.Engine {
 	RouterGroupApp.Exec.InitScriptLibraryRoutes(execApiGroup, authMiddleware)
 	RouterGroupApp.Exec.InitTransferRoutes(execApiGroup, authMiddleware)
 	RouterGroupApp.Exec.InitTaskManageRoutes(execApiGroup, authMiddleware)
+	RouterGroupApp.Exec.InitCronRoutes(execApiGroup, authMiddleware)
 	common.Log.Info("初始化路由完成！")
 	return r
 }
