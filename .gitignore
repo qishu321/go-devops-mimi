@@ -1,0 +1,24 @@
+mimi-ui/.DS_Store
+mimi-ui/node_modules/
+mimi-ui/dist/
+mimi-ui/npm-debug.log*
+mimi-ui/yarn-debug.log*
+mimi-ui/yarn-error.log*
+mimi-ui/**/*.log
+mimi-ui/
+mimi-ui/tests/**/coverage/
+mimi-ui/tests/e2e/reports
+mimi-ui/selenium-debug.log
+mimi-ui/
+mimi-ui/# Editor directories and files
+mimi-ui/.idea
+mimi-ui/.vscode
+mimi-ui/*.suo
+mimi-ui/*.ntvs*
+mimi-ui/*.njsproj
+mimi-ui/*.sln
+mimi-ui/*.local
+mimi-ui/
+mimi-ui/package-lock.json
+mimi-ui/yarn.lock
+mimi-ui/.history
