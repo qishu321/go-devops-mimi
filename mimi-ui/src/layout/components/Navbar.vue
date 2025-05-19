@@ -21,7 +21,7 @@
         </el-tooltip>
 
         <el-tooltip content="GitHub地址" effect="dark" placement="bottom">
-          <el-link style="font-size: 23px;" class="iconfont icon-github right-menu-item" href="https://github.com/qishu321/go-devops-mimi-ui" :underline="false" target="_blank" />
+          <el-link style="font-size: 23px;" class="iconfont icon-github right-menu-item" href="https://github.com/qishu321/go-devops-mimi" :underline="false" target="_blank" />
       </el-tooltip>
 
       </template>

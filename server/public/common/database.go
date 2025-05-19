@@ -7,6 +7,7 @@ import (
 	"go-devops-mimi/server/model/cmdb"
 	"go-devops-mimi/server/model/example"
 	"go-devops-mimi/server/model/exec"
+	"go-devops-mimi/server/model/nav"
 	"go-devops-mimi/server/model/system"
 
 	"github.com/glebarez/sqlite"
@@ -52,6 +53,8 @@ func dbAutoMigrate() {
 		&exec.ManageLog{},
 		&exec.Cron{},
 		&exec.CronLog{},
+		&nav.Nav{},
+		&nav.Link{},
 	)
 }
 

@@ -19,3 +19,5 @@ mimi-ui/*.local
 mimi-ui/package-lock.json
 mimi-ui/yarn.lock
 mimi-ui/.history
+server/logs/*
+server/*.exe

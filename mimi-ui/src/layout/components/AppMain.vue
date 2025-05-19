@@ -11,7 +11,7 @@
         <el-divider direction="vertical" />
         <span>Powered by </span>
           <span>
-            <a href="https://github.com/qishu321/go-devops-mimi-ui" target="_blank">devops-mimi-ui</a>
+            <a href="https://github.com/qishu321/go-devops-mimi" target="_blank">devops-mimi-ui</a>
           </span>
         <el-divider direction="vertical" />
         <span>Copyright </span>

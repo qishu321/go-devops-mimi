@@ -10,6 +10,7 @@ import (
 	"go-devops-mimi/server/routes/cmdb"
 	"go-devops-mimi/server/routes/example"
 	"go-devops-mimi/server/routes/exec_router"
+	"go-devops-mimi/server/routes/nav"
 	"go-devops-mimi/server/routes/system"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,7 @@ type RouterGroup struct {
 	Example example.RouterGroup
 	Cmdb    cmdb.RouterGroup
 	Exec    exec_router.RouterGroup
+	Nav     nav.RouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)
@@ -84,6 +86,8 @@ func InitRoutes() *gin.Engine {
 	RouterGroupApp.Exec.InitTransferRoutes(execApiGroup, authMiddleware)
 	RouterGroupApp.Exec.InitTaskManageRoutes(execApiGroup, authMiddleware)
 	RouterGroupApp.Exec.InitCronRoutes(execApiGroup, authMiddleware)
+	RouterGroupApp.Nav.InitNavRoutes(apiGroup, authMiddleware)
+
 	common.Log.Info("初始化路由完成！")
 	return r
 }

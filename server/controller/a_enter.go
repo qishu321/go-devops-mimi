@@ -4,6 +4,7 @@ import (
 	"go-devops-mimi/server/controller/cmdb"
 	"go-devops-mimi/server/controller/example"
 	"go-devops-mimi/server/controller/exec"
+	"go-devops-mimi/server/controller/nav"
 	"go-devops-mimi/server/controller/system"
 	"go-devops-mimi/server/public/tools"
 	"net/http"
@@ -16,6 +17,7 @@ type ControllerGroup struct {
 	ExampleControllerGroup example.ControllerGroup
 	CmdbControllerGroup    cmdb.ControllerGroup
 	ExecControllerGroup    exec.ControllerGroup
+	NavcontrollerGroup     nav.ControllerGroup
 }
 
 var ControllerGroupApp = new(ControllerGroup)

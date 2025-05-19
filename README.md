@@ -1,4 +1,5 @@
 <div align="center">
+<img src="https://cdn.nlark.com/yuque/0/2025/jpeg/28693706/1747205373498-713adaed-dee9-4b2d-9be2-599da02b7bc4.jpeg?x-oss-process=image%2Fformat%2Cwebp" width="80"  height="80">
 
 <h1 align="center">Go-devops-mini</h1>
   <p align="center">
@@ -19,6 +20,9 @@
 </div><br>
 
 ## 功能
+ - 便捷导航
+  - 分类和导航的增删改查
+  - 导航页的实现
  - 基础设施管理
    - 主机组的增删改
    - 主机的增删改查
@@ -33,7 +37,7 @@
    - 用户权限
 ```
 后期更新计划：
-1、新增个便捷导航，可以把运维资源（跳板机、监控、jenkins、harbor等资源，添加到导航里。）
+1、新增个便捷导航，可以把运维资源（跳板机、监控、jenkins、harbor等资源，添加到导航里。）（已实现）
 2、k8s管理，实现多集群的切换
 ```
 
@@ -60,6 +64,7 @@ go-devops-mimi/server
 | :------------------------------------------------------------------------------: | -------------------------------------------------------------------------------- |
 | ![查看脚本执行日志](https://cdn.nlark.com/yuque/0/2025/png/28693706/1747190696776-f638f804-01c1-457e-8de2-ccaf56ceeedc.png?x-oss-process=image%2Fformat%2Cwebp) | ![文件分发](https://cdn.nlark.com/yuque/0/2025/png/28693706/1747190931557-ff3158ec-15f9-4b50-8063-45bcc8c7332b.png?x-oss-process=image%2Fformat%2Cwebp) |
 | ![创建任务，添加子任务，绑定主机，可以添加环境变量](https://cdn.nlark.com/yuque/0/2025/png/28693706/1747190970578-2177cc28-24a0-4626-b9e5-4da7f1f5fe9a.png?x-oss-process=image%2Fformat%2Cwebp) | ![定时任务](https://cdn.nlark.com/yuque/0/2025/png/28693706/1747191018479-18527802-045f-4a48-b4f5-7a05b8cbbab0.png?x-oss-process=image%2Fformat%2Cwebp) |
+| ![分类和导航的增删改查](https://cdn.nlark.com/yuque/0/2025/png/28693706/1747620842841-0b7e457e-13a5-4d4a-aa7c-1874581f2e11.png?x-oss-process=image%2Fformat%2Cwebp) | ![导航页](https://cdn.nlark.com/yuque/0/2025/png/28693706/1747620817372-d3635ec6-8eb5-4eed-a96d-5f666d569026.png?x-oss-process=image%2Fformat%2Cwebp) |
 
 ## 🚀 快速开始
 

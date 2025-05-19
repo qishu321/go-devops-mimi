@@ -71,7 +71,12 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/link',
+    component: () => import('@/views/nav/info/info'),
+    hidden: true
+  },
 
+  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
@@ -85,6 +90,7 @@ export const constantRoutes = [
 
     ]
   },
+
   {
     path: '/profile',
     component: Layout,
