@@ -1,0 +1,33 @@
+version: "3.8"  # 推荐使用 3.8 版本，以支持更多特性
+
+services:
+
+  mysql:
+    image: registry.cn-shanghai.aliyuncs.com/ss1917/mysql:8.0
+    restart: always
+    user: root
+    privileged: true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./mysql/data:/var/lib/mysql
+      - ./devops-mimi.sql:/docker-entrypoint-initdb.d/devops-mimi.sql:ro
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_ROOT_HOST=%
+    command: 
+      - mysqld
+      - --bind-address=0.0.0.0  # 强制MySQL监听所有IP（覆盖默认配置）
+      - --default-authentication-plugin=mysql_native_password  # 强制使用旧版插件
+      - --skip-name-resolve     # 跳过DNS解析（提升性能）
+    container_name: mysql
+    hostname: mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    name: app-network  # ✅ 添加这一行，给 network 显式命名
+    driver: bridge

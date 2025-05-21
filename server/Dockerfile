@@ -1,17 +1,14 @@
-FROM golang:1.17.10 AS builder
+FROM alpine
 
-# ENV GOPROXY      https://goproxy.io
+COPY mimi-server /app/server
+COPY config /app/config
 
-RUN mkdir /app
-ADD . /app/
 WORKDIR /app
-RUN sed -i 's@localhost:389@openldap:389@g' /app/config.yml \
-    && sed -i 's@host: localhost@host: mysql@g'  /app/config.yml && go build -o xirang .
+ENV ENV=test_docker
+EXPOSE 8888
+RUN echo "https://mirrors.aliyun.com/alpine/v3.18/main" > /etc/apk/repositories
+RUN apk add --no-cache tzdata
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-FROM centos:centos7
-RUN mkdir /app
-WORKDIR /app
-COPY --from=builder /app/ .
-RUN chmod +x wait xirang && yum -y install vim net-tools telnet wget curl sqlite && yum clean all
-
-CMD ./wait && ./xirang
+CMD cd /app  &&./mimi-server

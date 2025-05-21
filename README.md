@@ -71,38 +71,34 @@ go-devops-mimi/server
 go-devops-mimi 项目的基础依赖项只有 MySQL，本地准备好这个服务之后，就可以启动项目，进行调试。
 
 
-### 拉取代码
+### 服务器部署步骤
 
 ```sh
-# 后端代码
+# 服务器初始化环境
+#需要安装docker和docker-compose,如已安装则忽略。
+$ yum install -y yum-utils device-mapper-persistent-data lvm2
+$ yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+$ sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+s$ sudo service docker start
+
+# 拉取代码
 $ git clone https://github.com/qishu321/go-devops-mimi.git
 
-# 前端代码
-$ git clone https://github.com/qishu321/go-devops-mimi-ui.git
-```
-
-### 更改配置
-
-```sh
 # 修改后端配置
 $ cd go-devops-mimi/server
 # 文件路径 config.yml, 根据自己本地的情况，调整数据库等配置信息。
 $ vim config.yml
+
+#修改前端配置
+$ co go-devops-mimi/mimi-ui
+#修改.env.production内的配置信息
+$ vim .env.production
+
+# 启动服务
+$ cd go-devops-mimi/deploy
+$ bash deploy.sh
+
+#访问服务
+$ http://ip:80，用户名/密码：admin/123456
 ```
 
-### 启动服务
-
-```sh
-# 启动后端
-$ cd go-devops-mimi/server
-$ go mod tidy
-$ make run
-
-# 启动前端
-$ cd go-devops-mimi-ui
-$ git config --global url."https://".insteadOf git://
-$ npm install --registry=http://registry.npmmirror.com
-$ yarn dev
-```
-
-本地访问：http://localhost:8090，用户名/密码：admin/123456

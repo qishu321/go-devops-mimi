@@ -1,0 +1,37 @@
+version: "3.8"  # 推荐使用 3.8 版本，以支持更多特性
+
+services:
+
+  mimi-server:
+    build:
+      context: ../server       # 相对于 deploy 目录，指向 server 目录
+      dockerfile: Dockerfile   # 如果 Dockerfile 不同名则写明文件名
+    image: mimi-server:latest  # 可选，指定构建后镜像的 tag
+    container_name: mimi-server
+    working_dir: /app
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "8888:8888"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+  mimi-ui:
+    build:
+      context: ../mimi-ui       # 相对于 deploy 目录，指向 server 目录
+      dockerfile: Dockerfile   # 如果 Dockerfile 不同名则写明文件名
+    image: mimi-ui:latest  # 可选，指定构建后镜像的 tag
+    container_name: mimi-ui
+    working_dir: /app
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "80:80"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+networks:
+  app-network:
+    external: true  # ✅ 引用已创建的外部网络
