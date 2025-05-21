@@ -75,11 +75,18 @@ go-devops-mimi 项目的基础依赖项只有 MySQL，本地准备好这个服�
 
 ```sh
 # 服务器初始化环境
-#需要安装docker和docker-compose,如已安装则忽略。
+#安装docker和docker-compose,如已安装则忽略。
 $ yum install -y yum-utils device-mapper-persistent-data lvm2
 $ yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 $ sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-s$ sudo service docker start
+$ sudo service docker start
+
+#安装golang，如已安装请忽略
+$ wget https://mirrors.aliyun.com/golang/go1.21.7.linux-amd64.tar.gz
+$ tar -xf go1.21.7.linux-amd64.tar.gz
+$ mv go /usr/local/
+$ echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+$ go version
 
 # 拉取代码
 $ git clone https://github.com/qishu321/go-devops-mimi.git
@@ -87,7 +94,9 @@ $ git clone https://github.com/qishu321/go-devops-mimi.git
 # 修改后端配置
 $ cd go-devops-mimi/server
 # 文件路径 config.yml, 根据自己本地的情况，调整数据库等配置信息。
-$ vim config.yml
+$ vim config/config.yml
+# 配置好后端内容后，生成后端二进制文件
+$ go env -w GOPROXY=https://goproxy.cn,direct && go mod tidy && CGO_ENABLED=0 go build -o mimi-server
 
 #修改前端配置
 $ co go-devops-mimi/mimi-ui
